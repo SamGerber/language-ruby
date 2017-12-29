@@ -782,6 +782,13 @@ describe "Ruby grammar", ->
     expect(lines[0][0]).toEqual value: '<<-EOS', scopes: ['source.ruby', 'string.unquoted.heredoc.ruby', 'punctuation.definition.string.begin.ruby']
     expect(lines[2][0]).toEqual value: 'EOS', scopes: ['source.ruby', 'string.unquoted.heredoc.ruby', 'punctuation.definition.string.end.ruby']
 
+  it "does not erroneously add heredoc scope to remainder of first line", ->
+    lines = grammar.tokenizeLines('(<<-EOS)\nThis is text\nEOS')
+    expect(lines[0][0]).toEqual value: '(', scopes: ['source.ruby', 'punctuation.section.function.ruby']
+    expect(lines[0][1]).toEqual value: '<<-EOS', scopes: ['source.ruby', 'string.unquoted.heredoc.ruby', 'punctuation.definition.string.begin.ruby']
+    expect(lines[0][2]).toEqual value: ')', scopes: ['source.ruby', 'punctuation.section.function.ruby']
+    expect(lines[2][0]).toEqual value: 'EOS', scopes: ['source.ruby', 'string.unquoted.heredoc.ruby', 'punctuation.definition.string.end.ruby']
+
   it "tokenizes <<~ Ruby 2.3.0 squiggly heredoc", ->
     lines = grammar.tokenizeLines('<<~EOS\nThis is text\nEOS')
     expect(lines[0][0]).toEqual value: '<<~EOS', scopes: ['source.ruby', 'string.unquoted.heredoc.ruby', 'punctuation.definition.string.begin.ruby']
